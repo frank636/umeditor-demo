@@ -113,7 +113,7 @@ public class SignUtils {
 	
 
 	public static void main(String[] args) throws ParseException, InterruptedException, UnsupportedEncodingException {
-		String password = "admin";
+		String password = "101010";
 		PBEStringEncryptor encryptor = new StandardPBEStringEncryptor(); 
 	    encryptor.setPassword("jesong");
 	    String encPassword = encryptor.encrypt(password);
