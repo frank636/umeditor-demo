@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+    xmlns:tx="http://www.springframework.org/schema/tx" 
+	xsi:schemaLocation="  
+    http://www.springframework.org/schema/beans   
+    http://www.springframework.org/schema/beans/spring-beans-3.1.xsd  
+    http://www.springframework.org/schema/context  
+    http://www.springframework.org/schema/context/spring-context-3.1.xsd  
+    http://www.springframework.org/schema/mvc  
+    http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd  
+    http://www.springframework.org/schema/tx 
+    http://www.springframework.org/schema/tx/spring-tx-3.1.xsd 
+    http://www.springframework.org/schema/aop 
+    http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+    ">
+    <context:annotation-config/>
+	<!-- 默认扫描的包路径 -->
+	<context:component-scan base-package="com.frank" />
+	<!-- 添加注解驱动 -->
+	<mvc:annotation-driven />
+	
+	<!-- 定义拦截器 ,（近似）总拦截器 <mvc:interceptors/>会为每一个HandlerMapping，注入一个拦截器。总有一个HandlerMapping是可以找到处理器的，最多也只找到一个处理器，所以这个拦截器总会被执行的。起到了总拦截器的作用。
+如果是REST风格的URL，静态资源也会被拦截。-->
+	<!-- 
+	<mvc:interceptors>
+		<bean class="com.interceptor.AccessInterceptor"></bean>
+		<bean class="com.interceptor.AccessInterceptor2"></bean>
+	</mvc:interceptors>
+	 -->
+	<!-- 定义拦截器，通过mvn:mapping配置，（近似）总拦截器
+	<mvc:interceptors >    
+	    <mvc:interceptor>    
+	        <mvc:mapping path="/*" />   
+	        <bean class="com.interceptor.AccessInterceptor"></bean>    
+	    </mvc:interceptor>    
+    </mvc:interceptors> 
+     -->
+     <!-- 如果使用了<mvc:annotation-driven />， 它会自动注册DefaultAnnotationHandlerMapping 与AnnotationMethodHandlerAdapter 这两个bean,所以就没有机会再给它注入interceptors属性，就无法指定拦截器。
+当然我们可以通过人工配置Bean，不使用 <mvc:annotation-driven />，就可以 给interceptors属性 注入拦截器了。
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">       
+	    <property name="interceptors">       
+		    <list>       
+		    	<bean class="com.mvc.MyInteceptor"></bean>      
+		    </list>       
+	    </property>       
+    </bean>  
+	-->
+	
+	<!-- 对静态资源文件的访问  方案一 （二选一） --> 
+	<!-- 
+	<mvc:default-servlet-handler/> 
+	 -->
+	
+	<!-- 对静态资源文件的访问  方案二 （二选一）  -->
+    <mvc:resources mapping="/image/**" location="/image/" cache-period="1111111"/>  
+    <mvc:resources mapping="/js/**" location="/js/" cache-period="1111111"/>  
+    <mvc:resources mapping="/css/**" location="/css/" cache-period="1111111"/>  
+    
+	<!-- 定义跳转的文件的前后缀 -->
+	<bean id="jspViewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+		<property name="prefix" value="/" />
+		<property name="suffix" value=".jsp" />
+		
+	</bean>
+	
+	<bean id="freemarkerViewResolver"
+        class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="cache" value="true" />
+        <property name="prefix" value="" />
+        <property name="suffix" value=".ftl" />
+        <property name="contentType" value="text/html;charset=UTF-8"></property>
+        <property name="requestContextAttribute" value="request" />
+        <property name="exposeSpringMacroHelpers" value="true" />
+        <property name="exposeRequestAttributes" value="true" />
+        <property name="exposeSessionAttributes" value="true" />
+    </bean>
+	
+</beans>

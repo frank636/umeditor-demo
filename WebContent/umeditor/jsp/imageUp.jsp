@@ -1,11 +1,11 @@
     <%@ page language="java" contentType="text/html; charset=utf-8"
              pageEncoding="utf-8"%>
-        <%@ page import="com.baidu.ueditor.um.Uploader" %>
+        <%@ page import="com.frank.common.tools.UeditorUploader" %>
 
             <%
     request.setCharacterEncoding("utf-8");
 	response.setCharacterEncoding("utf-8");
-    Uploader up = new Uploader(request);
+    UeditorUploader up = new UeditorUploader(request);
     up.setSavePath("upload");
     String[] fileType = {".gif" , ".png" , ".jpg" , ".jpeg" , ".bmp"};
     up.setAllowFiles(fileType);

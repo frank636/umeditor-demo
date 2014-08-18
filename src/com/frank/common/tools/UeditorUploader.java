@@ -1,24 +1,36 @@
-package com.baidu.ueditor.um;
+package com.frank.common.tools;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import org.apache.commons.fileupload.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Random;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadBase.InvalidContentTypeException;
 import org.apache.commons.fileupload.FileUploadBase.SizeLimitExceededException;
-import org.apache.commons.fileupload.util.*;
-import org.apache.commons.fileupload.servlet.*;
-import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload.util.Streams;
 
 import sun.misc.BASE64Decoder;
-import javax.servlet.http.HttpServletRequest;
 /**
  * UEditor文件上传辅助类
  *
  */
-public class Uploader {
+public class UeditorUploader {
 	// 输出文件地址
 	private String url = "";
 	// 上传文件名
@@ -44,7 +56,7 @@ public class Uploader {
 	
 	private HashMap<String, String> errorInfo = new HashMap<String, String>();
 
-	public Uploader(HttpServletRequest request) {
+	public UeditorUploader(HttpServletRequest request) {
 		this.request = request;
 		HashMap<String, String> tmp = this.errorInfo;
 		tmp.put("SUCCESS", "SUCCESS"); //默认成功
@@ -60,11 +72,13 @@ public class Uploader {
 	}
 
 	public void upload() throws Exception {
+		System.out.println("1--------------------");
 		boolean isMultipart = ServletFileUpload.isMultipartContent(this.request);
 		if (!isMultipart) {
 			this.state = this.errorInfo.get("NOFILE");
 			return;
 		}
+		System.out.println("2--------------------");
 		DiskFileItemFactory dff = new DiskFileItemFactory();
 		String savePath = this.getFolder(this.savePath);
 		dff.setRepository(new File(savePath));
@@ -82,9 +96,10 @@ public class Uploader {
 						continue;
 					}
 					this.fileName = this.getName(this.originalName);
+					System.out.println("originalName="+originalName);
 					this.type = this.getFileExt(this.fileName);
-					//this.url = savePath + "/" + this.fileName;
-					this.url = "http://127.0.0.1:8080/image" + "/" + this.fileName;
+					this.url = savePath + "/" + this.fileName;
+					System.out.println("url=" + this.url);
 					BufferedInputStream in = new BufferedInputStream(fis.openStream());
 					File file = new File(this.getPhysicalPath(this.url));
 					FileOutputStream out = new FileOutputStream( file );
@@ -207,16 +222,23 @@ public class Uploader {
 	}
 
 	/**
-	 * 根据传入的虚拟路径获取物理路径
+	 * 根据传入的虚拟路径获取物理路径<br/><br/>
+	 * 官方版本默认的是上传到项目路径下的一个配置目录里,但是这样用处不太大，于是，修改了getPhysicalPath方法，
+	 * 返回一个本地路径，这样就可以实现图片和应用分离的作用了<br/><br/>
+	 * 例如，我本地模拟了一个图片服务器位置是：D:\image， 路径为：http://127.0.0.1:8080/image/  <br/>
+	 * 则在umeditor.config.js中新增了变量：var IMAGEURL = "http://127.0.0.1:8080/image/";   <br/>
+	 * 修改   ,imagePath:IMAGEURL  <br/>
+	 * 修改  getPhysicalPath方法  return "d:/image/" +path;
 	 * 
 	 * @param path
 	 * @return
 	 */
 	private String getPhysicalPath(String path) {
-		String servletPath = this.request.getServletPath();
-		String realPath = this.request.getSession().getServletContext()
-				.getRealPath(servletPath);
-		return new File(realPath).getParent() +"/" +path;
+//		String servletPath = this.request.getServletPath();
+//		String realPath = this.request.getSession().getServletContext()
+//				.getRealPath(servletPath);
+//		return new File(realPath).getParent() +"/" +path;
+		return "d:/image" +"/" +path;
 	}
 
 	public void setSavePath(String savePath) {

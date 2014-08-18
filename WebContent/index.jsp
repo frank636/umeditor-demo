@@ -116,7 +116,9 @@
 
 <!--style给定宽度可以影响编辑器的最终宽度-->
 <script type="text/plain" id="myEditor" name="myEditor" style="width:1000px;height:240px;">
+<!--
     <p>这里我可以写一些输入提示</p>
+-->
 </script>
 <div class="clear"></div>
 <div id="btns">
