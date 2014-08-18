@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS `blog`;
 CREATE TABLE `blog` (
   `id` bigint(20) unsigned zerofill NOT NULL AUTO_INCREMENT,
   `title` varchar(100) CHARACTER SET latin1 DEFAULT NULL,
-  `content` blob,
+  `content` mediumblob,
   `time` date DEFAULT NULL,
   `ip` varchar(20) CHARACTER SET latin1 DEFAULT NULL,
   PRIMARY KEY (`id`)
